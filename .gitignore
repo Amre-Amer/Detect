@@ -1,0 +1,11 @@
+/.vscode
+/Assembly-CSharp.csproj
+/Detect.slnx
+/Library
+/Logs
+/Temp
+/Unity.XR.Hands.Samples.VisualizerSample.csproj
+/Unity.XR.Interaction.Toolkit.Samples.Hands.csproj
+/Unity.XR.Interaction.Toolkit.Samples.Hands.Editor.csproj
+/Unity.XR.Interaction.Toolkit.Samples.StarterAssets.csproj
+/Unity.XR.Interaction.Toolkit.Samples.StarterAssets.Editor.csproj
