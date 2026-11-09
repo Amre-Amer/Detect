@@ -710,7 +710,7 @@ MonoBehaviour:
       m_Data: 0
     m_ExpandedIDs:
     - m_Data: 0
-    - m_Data: 78656
+    - m_Data: 47094
     - m_Data: 1000000000
     - m_Data: 2147483647
     m_RenameOverlay:
@@ -745,7 +745,7 @@ MonoBehaviour:
       m_Data: 0
     m_ExpandedIDs:
     - m_Data: 0
-    - m_Data: 78656
+    - m_Data: 47094
     - m_Data: 1000000000
     - m_Data: 2147483647
     m_RenameOverlay:
@@ -1519,7 +1519,7 @@ MonoBehaviour:
     speed: 2
     m_Value: {x: 0.06817157, y: 0.89316374, z: -0.14488041, w: 0.42026675}
   m_Size:
-    m_Target: 0.15512028
+    m_Target: 0.15781586
     speed: 2
     m_Value: 0.15512028
   m_Ortho:
