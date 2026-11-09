@@ -2,6 +2,13 @@ import cv2
 import numpy as np
 from ultralytics import YOLO
 import pyvirtualcam
+import socket
+import json
+
+# Setup UDP Socket for Unity communication
+UDP_IP = "127.0.0.1"
+UDP_PORT = 5005
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 model = YOLO('yolov8n.pt') 
 
@@ -27,6 +34,13 @@ with pyvirtualcam.Camera(width=width, height=height, fps=fps, fmt=pyvirtualcam.P
         if not ret:
             break
 
+        # --- PLACEHOLDER DETECTION LOGIC ---
+        # Replace this with your actual model (YOLO, MediaPipe, etc.)
+        # For demonstration, we create a fake box moving diagonally
+        import time
+        t = time.time()
+        x, y, w, h = int((t * 50) % (width - 100)), int((t * 50) % (height - 100)), 100, 100
+        
         # --- YOUR DETECTION / PROCESSING LOGIC HERE ---
         # Example: Drawing a simple label or bounding box placeholder
         cv2.putText(
@@ -52,4 +66,23 @@ with pyvirtualcam.Camera(width=width, height=height, fps=fps, fmt=pyvirtualcam.P
         cam.send(frame_rgb)
         cam.sleep_until_next_frame()
 
+                # Format and send detection results to Unity
+        detection_data = {
+            "x": x,
+            "y": y,
+            "width": w,
+            "height": h,
+            "frame_width": width,
+            "frame_height": height
+        }
+        message = json.dumps(detection_data).encode('utf-8')
+        sock.sendto(message, (UDP_IP, UDP_PORT))
+
+        # Local preview break out clause (press 'q' to exit)
+        cv2.imshow('Python Local Preview', frame)
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+
 cap.release()
+cv2.destroyAllWindows()
+
