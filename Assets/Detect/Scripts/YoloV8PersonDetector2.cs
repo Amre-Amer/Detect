@@ -41,7 +41,6 @@ public class YOLOv8PersonDetector2 : MonoBehaviour
         runtimeModel = ModelLoader.Load(modelAsset);
         worker = new Worker(runtimeModel, BackendType.GPUCompute);
 
-        // Prepare working output texture
         outputTexture = new Texture2D(width, height, TextureFormat.RGBA32, false);
         displayUI.texture = outputTexture;
 
@@ -88,21 +87,10 @@ public class YOLOv8PersonDetector2 : MonoBehaviour
     {
         float t = Time.realtimeSinceStartup;
         using Tensor<float> inputTensor = TextureConverter.ToTensor(tex, tex.width, tex.height, 3);
-
-        // 2. Execute Model
         worker.Schedule(inputTensor);
-
-        // 3. Fetch Raw Output Tensor [1, 84, 8400]
         Tensor<float> outputTensor = worker.PeekOutput() as Tensor<float>;
-        // outputTensor.MakeReadable(); // Transfer data from GPU back to CPU array
-
-        // 4. Process Raw Tensors to gather "Person" (Index 0) bounding boxes
         List<Detection> candidates = ParseYOLOv8Output(outputTensor);
-
-        // 5. Apply Non-Maximum Suppression (NMS) to clear overlapping boxes
         List<Detection> finalDetections = ApplyNMS(candidates, iouThreshold);
-
-        // 6. Draw results onto visual texture
         RenderDetections(tex, finalDetections);
         t = Time.realtimeSinceStartup - t;
         Debug.Log("inference: " + t + "\n");
@@ -111,13 +99,9 @@ public class YOLOv8PersonDetector2 : MonoBehaviour
     private List<Detection> ParseYOLOv8Output(Tensor<float> output)
     {
         List<Detection> list = new List<Detection>();
-        
-        // YOLOv8 shapes: [batch=1, attributes=84, anchors=8400]
         int numAttributes = output.shape[1]; // 84
         int numAnchors = output.shape[2];    // 8400
-
         float[] data = output.DownloadToArray(); //.ToReadOnlyArray();
-
         for (int anchorIdx = 0; anchorIdx < numAnchors; anchorIdx++)
         {
             // Class index 0 is "person". 
