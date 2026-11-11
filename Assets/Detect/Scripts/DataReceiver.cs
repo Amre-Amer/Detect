@@ -15,6 +15,7 @@ public class DataReceiver : MonoBehaviour
     private string lastReceivedMessage = "";
     private bool newDataAvailable = false;
     private readonly object lockObject = new object();
+    int cntFrames;
 
     [System.Serializable]
     public class DetectionData
@@ -50,15 +51,16 @@ public class DataReceiver : MonoBehaviour
             try
             {
                 DetectionData data = JsonUtility.FromJson<DetectionData>(jsonString);
-                Debug.Log($"Received from Python -> X: {data.x}, Y: {data.y}");
-                
+                Debug.Log($"{cntFrames} Received from Python -> X: {data.x}, Y: {data.y}");
                 // Do something with the coordinates here (e.g., move UI or 3D elements)
+                Debug.Log("json: " + jsonString);
             }
             catch (Exception e)
             {
                 Debug.LogError($"Error parsing JSON: {e.Message}");
             }
         }
+        cntFrames++;
     }
 
     private void ReceiveData()

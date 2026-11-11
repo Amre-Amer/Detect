@@ -7,8 +7,8 @@ public class WebcamDisplay : MonoBehaviour
     public Renderer quadRenderer;
     public TMP_Text textFps;
 
-    int width = 436;
-    int height = 246;
+    int width = 1152;
+    int height = 600;
     int fps = 30;
     int cntFps;
 
@@ -44,7 +44,7 @@ public class WebcamDisplay : MonoBehaviour
             webcamTexture.Play();
             
             // Adjust the Quad's aspect ratio based on the webcam's properties
-            AdjustScale();
+            // AdjustScale();
         }
         else
         {
@@ -62,7 +62,7 @@ public class WebcamDisplay : MonoBehaviour
     {
         // Default aspect ratio correction (e.g., matching a 16:9 format)
         // Note: webcamTexture.width/height might return 16x16 until a few frames have passed.
-        transform.localScale = new Vector3(16f, 9f, 1f).normalized;
+        transform.localScale = new Vector3(width, height, 1f).normalized;
     }
 
     void OnDestroy()
