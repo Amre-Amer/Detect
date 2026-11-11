@@ -46,7 +46,7 @@ public class NmsVisualizer : MonoBehaviour
         // 3. Position and scale the Quad
         // Set Z to a slight offset forward from your canvas/image reference plane to avoid z-fighting
         quad.transform.position = new Vector3(rect.x, rect.y, 0f); 
-        quad.transform.localScale = new Vector3(rect.width, rect.height, 1f);
+        quad.transform.localScale = new Vector3(rect.width, rect.height, 10f);
 
         // 4. Apply a transparent shader or line material to see through the box
         if (boundingBoxMaterial != null)

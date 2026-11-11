@@ -1,0 +1,5 @@
+C:/Users/Amre/Detect/.utmp/RelWithDebInfo/6a2w1633/arm64-v8a/CMakeFiles/edit_cache.dir
+C:/Users/Amre/Detect/.utmp/RelWithDebInfo/6a2w1633/arm64-v8a/CMakeFiles/rebuild_cache.dir
+C:/Users/Amre/Detect/.utmp/RelWithDebInfo/6a2w1633/arm64-v8a/GameActivity/CMakeFiles/game.dir
+C:/Users/Amre/Detect/.utmp/RelWithDebInfo/6a2w1633/arm64-v8a/GameActivity/CMakeFiles/edit_cache.dir
+C:/Users/Amre/Detect/.utmp/RelWithDebInfo/6a2w1633/arm64-v8a/GameActivity/CMakeFiles/rebuild_cache.dir
