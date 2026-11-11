@@ -870,7 +870,7 @@ VideoPlayer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1368734110}
   m_Enabled: 1
-  m_VideoClip: {fileID: 32900000, guid: 5b5836ad49443f1448bb23f9d5df2c95, type: 3}
+  m_VideoClip: {fileID: 0}
   m_TargetCameraAlpha: 1
   m_TargetCamera3DLayout: 0
   m_TargetCamera: {fileID: 0}
@@ -910,23 +910,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 180c02784b9526d47868944578f9055f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GlobalsMgr
+  ynWebcam: 0
   modelAsset: {fileID: 5022602860645237092, guid: 62d0641dc2e06114e8abda9de7ba00b0, type: 3}
   displayUI: {fileID: 1647181554}
   confidenceThreshold: 0.4
   iouThreshold: 0.45
-  boxColor: {r: 0, g: 1, b: 0, a: 1}
-  boxThickness: 3
+  extractedFrameVideo: {fileID: 0}
+  webCamTex: {fileID: 0}
+  extractedFrameWebcam: {fileID: 0}
   outputTexture: {fileID: 0}
   rawImageBack: {fileID: 1559908032}
   width: 640
   height: 640
   textFps: {fileID: 1393052108}
   cntFps: 0
-  ynWebcam: 0
   videoPlayer: {fileID: 1368734111}
-  extractedFrameVideo: {fileID: 0}
-  webCamTex: {fileID: 0}
-  extractedFrameWebcam: {fileID: 0}
+  videoClip: {fileID: 32900000, guid: 5b5836ad49443f1448bb23f9d5df2c95, type: 3}
+  delay: 0
 --- !u!4 &1368734113
 Transform:
   m_ObjectHideFlags: 0
@@ -1643,7 +1643,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 2800000, guid: 6b3f641060a3c2f41b2e46232bbcc3f1, type: 3}
+  m_Texture: {fileID: 0}
   m_UVRect:
     serializedVersion: 2
     x: 0

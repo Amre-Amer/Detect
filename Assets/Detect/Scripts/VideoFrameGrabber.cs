@@ -4,12 +4,18 @@ using UnityEngine.Rendering;
 public class VideoFrameGrabber : MonoBehaviour
 {
     public GlobalsMgr g;
-    float interval = .025f;
+
+    void Awake()
+    {
+        g.videoPlayer.playOnAwake = false;
+        g.videoPlayer.isLooping = true;
+    }
 
     public void StartVideo()
     {
+        g.videoPlayer.clip = g.videoClip;
         g.videoPlayer.Play();
-        Invoke(nameof(GrabCurrentFrame), 1);
+        Invoke(nameof(GrabCurrentFrame), g.delay); // wait for video
     }
 
     public void GrabCurrentFrame()
@@ -29,6 +35,7 @@ public class VideoFrameGrabber : MonoBehaviour
         extractedFrame0.LoadRawTextureData(request.GetData<byte>());
         extractedFrame0.Apply();
         g.extractedFrameVideo = extractedFrame0;
+        // poor man's loop
         GrabCurrentFrame();
     }
 }

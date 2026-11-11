@@ -6,41 +6,43 @@ using TMPro;
 
 public class GlobalsMgr : MonoBehaviour
 {
-    [Header("Sentis Assets")]
+    [Header("Video or Webcam")]
+    public bool ynWebcam;
+    [Header("Inference Engine")]
     public ModelAsset modelAsset; 
     public RawImage displayUI;        
-
-    [Header("Detection Parameters")]
     [Range(0f, 1f)] public float confidenceThreshold = 0.4f;
     [Range(0f, 1f)] public float iouThreshold = 0.45f;
-    public Color boxColor = Color.green;
-    public int boxThickness = 3;
-
+    // public Color boxColor = Color.green;
+    // public int boxThickness = 3;
     public Worker worker;
     public Model runtimeModel;
+
+    [HideInInspector]
+    public Texture2D extractedFrameVideo;
+    [HideInInspector]
+    public WebCamTexture webCamTex;
+    [HideInInspector]
+    public Texture2D extractedFrameWebcam;
+    [HideInInspector]
     public Texture2D outputTexture;
+
+    [Header("Other")]
     public RawImage rawImageBack;
     public int width = 640;
     public int height = 640;
     public TMP_Text textFps;
     public int cntFps;
-
-    public bool ynWebcam;
     public VideoPlayer videoPlayer;
-    public Texture2D extractedFrameVideo;
-    public WebCamTexture webCamTex;
-    public Texture2D extractedFrameWebcam;
+    public VideoClip videoClip;
+    public float delay;
 
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    void Awake()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        delay = 1;
+        width = 640;
+        height = 640;
+        confidenceThreshold = 0.4f;
+        iouThreshold = 0.45f;
     }
 }

@@ -164,8 +164,6 @@ public class YOLOv8PersonDetector2 : MonoBehaviour
             int width = Mathf.RoundToInt(det.rect.width * texW);
             int height = Mathf.RoundToInt(det.rect.height * texH);
 
-            // game objects ???
-            DrawBox(g.outputTexture, x, y, width, height, g.boxColor, g.boxThickness);
             BoundingBox bb = new BoundingBox();
             bb.rect.x = x;
             bb.rect.y = y;
@@ -175,40 +173,6 @@ public class YOLOv8PersonDetector2 : MonoBehaviour
         }
 
         g.outputTexture.Apply(); // Commit pixel array modifications to GPU memory
-    }
-
-    private void DrawBox(Texture2D tex, int x, int y, int width, int height, Color color, int thickness)
-    {
-        // Debug.Log("DrawBox: " + x.ToString("F0") + "," + y.ToString("F0") + "\n");
-        for (int i = 0; i < thickness; i++)
-        {
-            DrawLine(tex, x, y + i, x + width, y + i, color);                     // Top Line
-            DrawLine(tex, x, y + height - i, x + width, y + height - i, color); // Bottom Line
-            DrawLine(tex, x + i, y, x + i, y + height, color);                     // Left Line
-            DrawLine(tex, x + width - i, y, x + width - i, y + height, color); // Right Line
-        }
-    }
-
-    private void DrawLine(Texture2D tex, int x0, int y0, int x1, int y1, Color color)
-    {
-        // Clamp to prevent edge out-of-bounds drawing crashes
-        x0 = Mathf.Clamp(x0, 0, tex.width - 1);
-        x1 = Mathf.Clamp(x1, 0, tex.width - 1);
-        y0 = Mathf.Clamp(y0, 0, tex.height - 1);
-        y1 = Mathf.Clamp(y1, 0, tex.height - 1);
-
-        int dx = Mathf.Abs(x1 - x0), sx = x0 < x1 ? 1 : -1;
-        int dy = -Mathf.Abs(y1 - y0), sy = y0 < y1 ? 1 : -1;
-        int err = dx + dy, e2;
-
-        while (true)
-        {
-            tex.SetPixel(x0, y0, color);
-            if (x0 == x1 && y0 == y1) break;
-            e2 = 2 * err;
-            if (e2 >= dy) { err += dy; x0 += sx; }
-            if (e2 <= dx) { err += dx; y0 += sy; }
-        }
     }
 
     void OnDestroy()
