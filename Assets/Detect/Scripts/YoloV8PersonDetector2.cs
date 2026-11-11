@@ -79,7 +79,10 @@ public class YOLOv8PersonDetector2 : MonoBehaviour
             InferTexture2D(webcamFrameGrabber.extractedFrame);  
         } else
         {
-            InferTexture2D(videoFrameGrabber.extractedFrame);  
+            if (videoFrameGrabber.extractedFrame != null)
+            {
+                InferTexture2D(videoFrameGrabber.extractedFrame);  
+            }
         }
     }
 

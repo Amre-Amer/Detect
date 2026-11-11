@@ -11,6 +11,7 @@ public class VideoFrameGrabber : MonoBehaviour
     public void StartVideo()
     {
         // InvokeRepeating(nameof(GrabCurrentFrame), interval, interval);
+        videoPlayer.Play();
         Invoke(nameof(GrabCurrentFrame), 1);
         //  GrabCurrentFrame();
     }
