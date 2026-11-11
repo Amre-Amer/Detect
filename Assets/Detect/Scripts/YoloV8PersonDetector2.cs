@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TMPro;
 using Unity.InferenceEngine;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,9 +10,8 @@ public class YOLOv8PersonDetector2 : MonoBehaviour
     public WebcamFrameGrabber webcamFrameGrabber;
     public NmsVisualizer nmsVisualizer;
     [Header("Sentis Assets")]
-    public ModelAsset modelAsset; // Assign yolov8n.onnx here
-    // public Texture2D inputTexture;    // The source texture to run detection on
-    public RawImage displayUI;        // The UI RawImage component to show results
+    public ModelAsset modelAsset; 
+    public RawImage displayUI;        
 
     [Header("Detection Parameters")]
     [Range(0f, 1f)] public float confidenceThreshold = 0.4f;
@@ -25,34 +25,19 @@ public class YOLOv8PersonDetector2 : MonoBehaviour
     public RawImage rawImageBack;
     int width = 640;
     int height = 640;
+    public TMP_Text textFps;
+    int cntFps;
 
     public bool ynWebcam;
 
-    // Struct to hold candidate person bounding box detections
     struct Detection
     {
-        public Rect rect; // Normalized coordinates (0 to 1)
+        public Rect rect; 
         public float score;
-    }
-
-    void Awake()
-    {
-        // InferTexture2D(inputTexture);
-        // inputTexture = TextureExtensions.Resized(inputTexture, 640, 640);
-        // rawImageBack.texture = inputTexture;
     }
 
     void Start()
     {
-        // InferTexture2D(inputTexture);
-
-        // if (modelAsset == null || inputTexture == null || displayUI == null)
-        // {
-        //     Debug.LogError("Please assign all references in the Inspector!");
-        //     return;
-        // }
-
-        // Initialize Unity Sentis runtime engine
         runtimeModel = ModelLoader.Load(modelAsset);
         worker = new Worker(runtimeModel, BackendType.GPUCompute);
 
@@ -60,15 +45,14 @@ public class YOLOv8PersonDetector2 : MonoBehaviour
         outputTexture = new Texture2D(width, height, TextureFormat.RGBA32, false);
         displayUI.texture = outputTexture;
 
-        // InvokeRepeating(nameof(RunInference), 1, 1);
-        // RunInference();
-        // videoFrameGrabber.GrabCurrentFrame();  
         if (ynWebcam) {
             webcamFrameGrabber.StartWebcam();
         } else
         {
             videoFrameGrabber.StartVideo();
         }
+
+        InvokeRepeating(nameof(Fps), 1, 1);
     }
 
     void Update()
@@ -84,6 +68,13 @@ public class YOLOv8PersonDetector2 : MonoBehaviour
                 InferTexture2D(videoFrameGrabber.extractedFrame);  
             }
         }
+        cntFps++;
+    }
+
+    void Fps()
+    {
+        textFps.text = "fps: " + cntFps;
+        cntFps = 0;
     }
 
     void InferTexture2D(Texture2D tex)
@@ -96,8 +87,6 @@ public class YOLOv8PersonDetector2 : MonoBehaviour
     public void RunInference(Texture2D tex)
     {
         float t = Time.realtimeSinceStartup;
-        // 1. Convert input texture to a Sentis Tensor. 
-        // YOLOv8 natively expects a 640x640 shape, Sentis dynamically handles scaling during conversion.
         using Tensor<float> inputTensor = TextureConverter.ToTensor(tex, tex.width, tex.height, 3);
 
         // 2. Execute Model
