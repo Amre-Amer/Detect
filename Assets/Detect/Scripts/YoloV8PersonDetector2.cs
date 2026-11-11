@@ -198,7 +198,7 @@ public class YOLOv8PersonDetector2 : MonoBehaviour
 
     private void DrawBox(Texture2D tex, int x, int y, int width, int height, Color color, int thickness)
     {
-        Debug.Log("DrawBox: " + x.ToString("F0") + "," + y.ToString("F0") + "\n");
+        // Debug.Log("DrawBox: " + x.ToString("F0") + "," + y.ToString("F0") + "\n");
         for (int i = 0; i < thickness; i++)
         {
             DrawLine(tex, x, y + i, x + width, y + i, color);                     // Top Line
