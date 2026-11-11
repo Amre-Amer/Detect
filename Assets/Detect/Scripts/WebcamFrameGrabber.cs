@@ -2,17 +2,15 @@ using UnityEngine;
 
 public class WebcamFrameGrabber : MonoBehaviour
 {
-    private WebCamTexture webCamTex;
-    public Texture2D extractedFrame;
-
+    public GlobalsMgr g;
     public void StartWebcam()
     {
         // Initialize the first available webcam
         WebCamDevice[] devices = WebCamTexture.devices;
         if (devices.Length > 0)
         {
-            webCamTex = new WebCamTexture(devices[0].name);
-            webCamTex.Play();
+            g.webCamTex = new WebCamTexture(devices[0].name);
+            g.webCamTex.Play();
         }
         else
         {
@@ -23,19 +21,19 @@ public class WebcamFrameGrabber : MonoBehaviour
     public void UpdateWebcam()
     {
         // Check if the webcam is playing and has new frame data
-        if (webCamTex != null && webCamTex.didUpdateThisFrame)
+        if (g.webCamTex != null && g.webCamTex.didUpdateThisFrame)
         {
             // Option 1: Access raw pixel colors (Color32 array)
-            Color32[] pixels = webCamTex.GetPixels32();
+            Color32[] pixels = g.webCamTex.GetPixels32();
 
             // Option 2: Copy the WebCamTexture into a Texture2D to save or process
-            if (extractedFrame == null || extractedFrame.width != webCamTex.width || extractedFrame.height != webCamTex.height)
+            if (g.extractedFrameWebcam == null || g.extractedFrameWebcam.width != g.webCamTex.width || g.extractedFrameWebcam.height != g.webCamTex.height)
             {
-                extractedFrame = new Texture2D(webCamTex.width, webCamTex.height, TextureFormat.RGBA32, false);
+                g.extractedFrameWebcam = new Texture2D(g.webCamTex.width, g.webCamTex.height, TextureFormat.RGBA32, false);
             }
             
-            extractedFrame.SetPixels32(pixels);
-            extractedFrame.Apply();
+            g.extractedFrameWebcam.SetPixels32(pixels);
+            g.extractedFrameWebcam.Apply();
 
             // Example: Encode to PNG bytes if you need to save to disk
             // byte[] bytes = snapshot.EncodeToPNG();
@@ -44,9 +42,9 @@ public class WebcamFrameGrabber : MonoBehaviour
 
     void OnDestroy()
     {
-        if (webCamTex != null)
+        if (g.webCamTex != null)
         {
-            webCamTex.Stop();
+            g.webCamTex.Stop();
         }
     }
 }

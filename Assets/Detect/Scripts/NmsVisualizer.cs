@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class NmsVisualizer : MonoBehaviour
 {
+    public GlobalsMgr g;
     [Tooltip("Assign a simple unlit color material (e.g., transparent green boundary)")]
     public Material boundingBoxMaterial; 
 

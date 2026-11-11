@@ -6,29 +6,10 @@ using UnityEngine.UI;
 
 public class YOLOv8PersonDetector2 : MonoBehaviour
 {
+    public GlobalsMgr g;
     public VideoFrameGrabber videoFrameGrabber;
     public WebcamFrameGrabber webcamFrameGrabber;
     public NmsVisualizer nmsVisualizer;
-    [Header("Sentis Assets")]
-    public ModelAsset modelAsset; 
-    public RawImage displayUI;        
-
-    [Header("Detection Parameters")]
-    [Range(0f, 1f)] public float confidenceThreshold = 0.4f;
-    [Range(0f, 1f)] public float iouThreshold = 0.45f;
-    public Color boxColor = Color.green;
-    public int boxThickness = 3;
-
-    private Worker worker;
-    private Model runtimeModel;
-    private Texture2D outputTexture;
-    public RawImage rawImageBack;
-    int width = 640;
-    int height = 640;
-    public TMP_Text textFps;
-    int cntFps;
-
-    public bool ynWebcam;
 
     struct Detection
     {
@@ -38,13 +19,13 @@ public class YOLOv8PersonDetector2 : MonoBehaviour
 
     void Start()
     {
-        runtimeModel = ModelLoader.Load(modelAsset);
-        worker = new Worker(runtimeModel, BackendType.GPUCompute);
+       g.runtimeModel = ModelLoader.Load(g.modelAsset);
+        g.worker = new Worker(g.runtimeModel, BackendType.GPUCompute);
 
-        outputTexture = new Texture2D(width, height, TextureFormat.RGBA32, false);
-        displayUI.texture = outputTexture;
+        g.outputTexture = new Texture2D(g.width, g.height, TextureFormat.RGBA32, false);
+        g.displayUI.texture = g.outputTexture;
 
-        if (ynWebcam) {
+        if (g.ynWebcam) {
             webcamFrameGrabber.StartWebcam();
         } else
         {
@@ -56,30 +37,30 @@ public class YOLOv8PersonDetector2 : MonoBehaviour
 
     void Update()
     {
-        if (ynWebcam)
+        if (g.ynWebcam)
         {
             webcamFrameGrabber.UpdateWebcam();
-            InferTexture2D(webcamFrameGrabber.extractedFrame);  
+            InferTexture2D(g.extractedFrameWebcam);  
         } else
         {
-            if (videoFrameGrabber.extractedFrame != null)
+            if (g.extractedFrameVideo != null)
             {
-                InferTexture2D(videoFrameGrabber.extractedFrame);  
+                InferTexture2D(g.extractedFrameVideo);  
             }
         }
-        cntFps++;
+        g.cntFps++;
     }
 
     void Fps()
     {
-        textFps.text = "fps: " + cntFps;
-        cntFps = 0;
+        g.textFps.text = "fps: " + g.cntFps;
+        g.cntFps = 0;
     }
 
     void InferTexture2D(Texture2D tex)
     {
         Texture2D texInference = TextureExtensions.Resized(tex, 640, 640);
-        rawImageBack.texture = texInference;
+        g.rawImageBack.texture = texInference;
         RunInference(texInference);
     }
 
@@ -87,10 +68,10 @@ public class YOLOv8PersonDetector2 : MonoBehaviour
     {
         float t = Time.realtimeSinceStartup;
         using Tensor<float> inputTensor = TextureConverter.ToTensor(tex, tex.width, tex.height, 3);
-        worker.Schedule(inputTensor);
-        Tensor<float> outputTensor = worker.PeekOutput() as Tensor<float>;
+        g.worker.Schedule(inputTensor);
+        Tensor<float> outputTensor = g.worker.PeekOutput() as Tensor<float>;
         List<Detection> candidates = ParseYOLOv8Output(outputTensor);
-        List<Detection> finalDetections = ApplyNMS(candidates, iouThreshold);
+        List<Detection> finalDetections = ApplyNMS(candidates, g.iouThreshold);
         RenderDetections(tex, finalDetections);
         t = Time.realtimeSinceStartup - t;
         Debug.Log("inference: " + t + "\n");
@@ -109,13 +90,13 @@ public class YOLOv8PersonDetector2 : MonoBehaviour
             // Attribute indices: 0=cx, 1=cy, 2=w, 3=h, 4=person_score, 5=bike_score...
             float personScore = data[(4 * numAnchors) + anchorIdx];
 
-            if (personScore >= confidenceThreshold)
+            if (personScore >= g.confidenceThreshold)
             {
                 // Fetch bounding box centers and dimensions (relative to 640x640 internal size)
-                float cx = data[(0 * numAnchors) + anchorIdx] / width;
-                float cy = data[(1 * numAnchors) + anchorIdx] / height;
-                float w  = data[(2 * numAnchors) + anchorIdx] / width;
-                float h  = data[(3 * numAnchors) + anchorIdx] / height;
+                float cx = data[(0 * numAnchors) + anchorIdx] / g.width;
+                float cy = data[(1 * numAnchors) + anchorIdx] / g.height;
+                float w  = data[(2 * numAnchors) + anchorIdx] / g.width;
+                float h  = data[(3 * numAnchors) + anchorIdx] / g.height;
 
                 // Convert center-based box coordinates [cx, cy, w, h] to corner-based [xMin, yMin]
                 float xMin = Mathf.Clamp01(cx - (w / 2f));
@@ -169,10 +150,10 @@ public class YOLOv8PersonDetector2 : MonoBehaviour
     private void RenderDetections(Texture2D tex, List<Detection> detections)
     {
         // Clear frame by copying the raw initial source pixels
-        Graphics.CopyTexture(tex, outputTexture);
+        Graphics.CopyTexture(tex, g.outputTexture);
 
-        int texW = outputTexture.width;
-        int texH = outputTexture.height;
+        int texW = g.outputTexture.width;
+        int texH = g.outputTexture.height;
         nmsVisualizer.ResetBBs();
         foreach (var det in detections)
         {
@@ -184,7 +165,7 @@ public class YOLOv8PersonDetector2 : MonoBehaviour
             int height = Mathf.RoundToInt(det.rect.height * texH);
 
             // game objects ???
-            DrawBox(outputTexture, x, y, width, height, boxColor, boxThickness);
+            DrawBox(g.outputTexture, x, y, width, height, g.boxColor, g.boxThickness);
             BoundingBox bb = new BoundingBox();
             bb.rect.x = x;
             bb.rect.y = y;
@@ -193,7 +174,7 @@ public class YOLOv8PersonDetector2 : MonoBehaviour
             nmsVisualizer.DisplayNmsResultsAsQuadsOne(bb);
         }
 
-        outputTexture.Apply(); // Commit pixel array modifications to GPU memory
+        g.outputTexture.Apply(); // Commit pixel array modifications to GPU memory
     }
 
     private void DrawBox(Texture2D tex, int x, int y, int width, int height, Color color, int thickness)
@@ -233,6 +214,6 @@ public class YOLOv8PersonDetector2 : MonoBehaviour
     void OnDestroy()
     {
         // Critical cleanup to avoid massive memory leaks in Sentis
-        worker?.Dispose();
+        g.worker?.Dispose();
     }
 }

@@ -1,23 +1,21 @@
 using UnityEngine;
-using UnityEngine.Video;
 using UnityEngine.Rendering;
 
 public class VideoFrameGrabber : MonoBehaviour
 {
-    public VideoPlayer videoPlayer;
-    public Texture2D extractedFrame;
+    public GlobalsMgr g;
     float interval = .025f;
 
     public void StartVideo()
     {
-        videoPlayer.Play();
+        g.videoPlayer.Play();
         Invoke(nameof(GrabCurrentFrame), 1);
     }
 
     public void GrabCurrentFrame()
     {
-        if (videoPlayer == null || videoPlayer.texture == null) return;
-        AsyncGPUReadback.Request(videoPlayer.texture, 0, OnFrameReadback);
+        if (g.videoPlayer == null || g.videoPlayer.texture == null) return;
+        AsyncGPUReadback.Request(g.videoPlayer.texture, 0, OnFrameReadback);
     }
 
     private void OnFrameReadback(AsyncGPUReadbackRequest request)
@@ -27,10 +25,10 @@ public class VideoFrameGrabber : MonoBehaviour
             Debug.LogError("GPU readback error occurred.");
             return;
         }
-        Texture2D extractedFrame0 = new Texture2D(videoPlayer.texture.width, videoPlayer.texture.height, TextureFormat.RGBA32, false);
+        Texture2D extractedFrame0 = new Texture2D(g.videoPlayer.texture.width, g.videoPlayer.texture.height, TextureFormat.RGBA32, false);
         extractedFrame0.LoadRawTextureData(request.GetData<byte>());
         extractedFrame0.Apply();
-        extractedFrame = extractedFrame0;
+        g.extractedFrameVideo = extractedFrame0;
         GrabCurrentFrame();
     }
 }
